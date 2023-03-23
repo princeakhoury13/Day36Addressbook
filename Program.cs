@@ -4,7 +4,19 @@
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Day 36 assignment! ");
+            Console.WriteLine("Welcome to Address Book Repo ! ");
+
+
+            AddressBookRepo repo = new AddressBookRepo();
+
+            AddressBookModel addressBookModel = new AddressBookModel();
+
+            repo.GetAddressBook();
+
+
+
+
+
         }
     }
 }
