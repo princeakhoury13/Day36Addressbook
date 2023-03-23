@@ -13,67 +13,75 @@ namespace Day36AddressBook
         SqlConnection connection = new SqlConnection(connectionString);
 
 
+        
+
         public void GetAddressBook()
         {
             try
             {
-                AddressBookModel addressBookModel= new AddressBookModel();
-                using(this.connection)
+                AddressBookModel addressBookModel = new AddressBookModel();
+                string query = @"select id, first_name, last_name, address, city, state, zip, phone, email, name, contact_type from addressBook";
+
+                
+                Thread thread = new Thread(() =>
                 {
-
-                    string query = @"select id, first_name, last_name, address, city, state, zip, phone, email, name, contact_type from addressBook";
-                    SqlCommand cmd = new SqlCommand(query, this.connection);
-                    this.connection.Open();
-
-                    SqlDataReader dr = cmd.ExecuteReader();
-
-                    if(dr.HasRows)
+                    try
                     {
-                        while(dr.Read())
+                        using (SqlConnection connection = new SqlConnection(connectionString))
                         {
-                            addressBookModel.id = dr.GetInt32(0);
-                            addressBookModel.first_name= dr.GetString(1);
-                            addressBookModel.last_name= dr.GetString(2);
-                            addressBookModel.address = dr.GetString(3);
-                            addressBookModel.city = dr.GetString(4);
-                            addressBookModel.state = dr.GetString(5);
-                            addressBookModel.zip = dr.GetString(6);
-                            addressBookModel.phone = dr.GetString(7);
-                            addressBookModel.email= dr.GetString(8);
-                            addressBookModel.name= dr.GetString(9);
-                            addressBookModel.contact_type = dr.GetString(10);
+                            SqlCommand cmd = new SqlCommand(query, connection);
+                            connection.Open();
 
-                            Console.WriteLine(" {0} {1} ",addressBookModel.id, addressBookModel.first_name);
+                            SqlDataReader dr = cmd.ExecuteReader();
 
+                            if (dr.HasRows)
+                            {
+                                while (dr.Read())
+                                {
+                                    addressBookModel.id = dr.GetInt32(0);
+                                    addressBookModel.first_name = dr.GetString(1);
+                                    addressBookModel.last_name = dr.GetString(2);
+                                    addressBookModel.address = dr.GetString(3);
+                                    addressBookModel.city = dr.GetString(4);
+                                    addressBookModel.state = dr.GetString(5);
+                                    addressBookModel.zip = dr.GetString(6);
+                                    addressBookModel.phone = dr.GetString(7);
+                                    addressBookModel.email = dr.GetString(8);
+                                    addressBookModel.name = dr.GetString(9);
+                                    addressBookModel.contact_type = dr.GetString(10);
+
+                                    Console.WriteLine("{0} {1}", addressBookModel.id, addressBookModel.first_name);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Data not found!");
+                            }
+                            dr.Close();
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("Data not found!");
+                        Console.WriteLine(ex.Message);
                     }
-                    dr.Close();
-                    this.connection.Close();
+                });
 
-
-
-
-                }
+                
+                thread.Start();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
             finally
             {
                 this.connection.Close();
             }
+        
+
+
+
         }
-
-
-
-
-
-
-
-    }
+        }
 }
